@@ -39,13 +39,13 @@ func Get() Xingamento {
 }
 
 func apiHandler(w http.ResponseWriter, r *http.Request) {
-	payload, _ := json.Marshal(Get())
+	xingamento, _ := json.Marshal(Get())
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.Write(payload)
+	w.Write(xingamento)
 }
 
 func slackHandler(w http.ResponseWriter, r *http.Request) {
-	message := Get()
+	xingamento := Get()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.Write([]byte(fmt.Sprintf(`{
 	"response_type": "in_channel",
@@ -53,7 +53,7 @@ func slackHandler(w http.ResponseWriter, r *http.Request) {
 			"text": "%s",
 			"fallback": "%s"
 		}
-	]}`, message.Value, message.Value)))
+	]}`, xingamento.Value, xingamento.Value)))
 }
 
 type Xingamento struct {
