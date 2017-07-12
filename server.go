@@ -22,7 +22,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
 
-func GetRandomFromFile(file string) string {
+func getRandomFromFile(file string) string {
 	rand.Seed(time.Now().UnixNano())
 	all, _ := ioutil.ReadFile(file)
 	list := bytes.Split(all, []byte("\n"))
@@ -32,27 +32,27 @@ func GetRandomFromFile(file string) string {
 func Get() Xingamento {
 	return Xingamento{
 		Value: fmt.Sprintf("%s %s",
-			GetRandomFromFile("data/subjects.txt"),
-			GetRandomFromFile("data/predicates.txt"),
+			getRandomFromFile("data/subjects.txt"),
+			getRandomFromFile("data/predicates.txt"),
 		),
 	}
 }
 
 func apiHandler(w http.ResponseWriter, r *http.Request) {
 	payload, _ := json.Marshal(Get())
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.Write(payload)
 }
 
 func slackHandler(w http.ResponseWriter, r *http.Request) {
 	message := Get()
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.Write([]byte(fmt.Sprintf(`{
-    "response_type": "in_channel",
-    "attachments": [{
-          "text": "%s",
-          "fallback": "%s"
-	  }
+	"response_type": "in_channel",
+	"attachments": [{
+			"text": "%s",
+			"fallback": "%s"
+		}
 	]}`, message.Value, message.Value)))
 }
 

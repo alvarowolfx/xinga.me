@@ -68,4 +68,3 @@ testador de vibrador
 tocador de trucumamas
 tratador de piroca
 usuario de crocs
-usuario de linux
