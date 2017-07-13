@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -51,12 +52,26 @@ func slackHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	content, _ := ioutil.ReadFile("templates/index.html")
+	tpl, _ := template.New("index").Parse(string(content))
+
+	xingamento := newRandomXingamento()
+	data := struct {
+		Value string
+	}{
+		Value: xingamento.Value,
+	}
+
+	tpl.Execute(w, data)
+
+}
+
 func init() {
 	//staticHandler := http.FileServer(http.Dir("static"))
 
 	http.HandleFunc("/api", apiHandler)
 	http.HandleFunc("/slack", slackHandler)
 	//http.Handle("/", staticHandler)
-	//log.Printf("iniciando o aplicativo %s\n", newRandomXingamento().Value)
-	//log.Fatal(http.ListenAndServe(":3000", nil))
+	http.HandleFunc("/", indexHandler)
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Xinga.me</title>
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+        <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="//unpkg.com/vue-material/dist/vue-material.css">        
+    </head>
+    <body>                
+        <div id="app" class="main-content">            
+            <md-toolbar class="md-warn">                
+                <h2 class="md-title" style="flex: 1">Xinga.me</h2>                
+            </md-toolbar>
+            <a href="https://github.com/alvarowolfx/xinga.me">
+                <img style="position: absolute; top: 0; right: 0; border: 0;" 
+                    src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" 
+                    alt="Fork me on GitHub" 
+                    data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+            </a>        
+            <br/>
+            <md-layout md-flex md-align="center" md-gutter>
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">{{`{{message}}`}}</div>                    
+                    </md-card-header>
+                    <md-card-actions>
+                        <md-button class="md-warn" v-on:click="randomXingamento()">
+                            Novo Xingamento 0800
+                        </md-button>
+                    </md-card-actions>
+                </md-card>
+            </md-layout>            
+        </div>                
+    </body>
+    <script src="//unpkg.com/vue"></script>
+    <script src="//unpkg.com/vue-material@0.7.4"></script>    
+    <script>
+        Vue.use(VueMaterial)
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: {{ .Value }}
+            },
+            methods: {
+                randomXingamento: function () {
+                    var xhr = new XMLHttpRequest();
+                    var self = this;
+                    xhr.open('GET', '/api');
+                    xhr.onload = function () {
+                        var res = JSON.parse(xhr.responseText);
+                        self.message = res.xingamento;
+                    }
+                    xhr.send()
+                }
+            }
+        });
+    </script>        
+</html>
