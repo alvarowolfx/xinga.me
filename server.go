@@ -1,25 +1,18 @@
-package main
+package backend
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
 )
 
-func main() {
-	staticHandler := http.FileServer(http.Dir("static"))
-
-	http.Handle("/", staticHandler)
-	http.HandleFunc("/api/", apiHandler)
-	http.HandleFunc("/slack/", slackHandler)
-
-	log.Printf("iniciando o aplicativo %s\n", Get().Value)
-	log.Fatal(http.ListenAndServe(":3000", nil))
+// Xingamento 0800
+type Xingamento struct {
+	Value string `json:"xingamento"`
 }
 
 func getRandomFromFile(file string) string {
@@ -29,7 +22,7 @@ func getRandomFromFile(file string) string {
 	return string(list[rand.Intn(len(list))])
 }
 
-func Get() Xingamento {
+func newRandomXingamento() Xingamento {
 	return Xingamento{
 		Value: fmt.Sprintf("%s %s",
 			getRandomFromFile("data/subjects.txt"),
@@ -39,19 +32,31 @@ func Get() Xingamento {
 }
 
 func apiHandler(w http.ResponseWriter, r *http.Request) {
-	xingamento, _ := json.Marshal(Get())
+	xingamento, _ := json.Marshal(newRandomXingamento())
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.Write(xingamento)
 }
 
-func slackHandler(w http.ResponseWriter, r *http.Request) {
-	xingamento := Get()
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.Write([]byte(
-		fmt.Sprintf(`{"response_type": "in_channel","text": "%s"}`, xingamento.Value),
-	))
+type slackResponse struct {
+	ResponseType string `json:"response_type"`
+	Text         string `json:"text"`
 }
 
-type Xingamento struct {
-	Value string `json:"xingamento"`
+func slackHandler(w http.ResponseWriter, r *http.Request) {
+	xingamento := newRandomXingamento()
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	json.NewEncoder(w).Encode(slackResponse{
+		ResponseType: "in_channel",
+		Text:         xingamento.Value,
+	})
+}
+
+func init() {
+	//staticHandler := http.FileServer(http.Dir("static"))
+
+	http.HandleFunc("/api", apiHandler)
+	http.HandleFunc("/slack", slackHandler)
+	//http.Handle("/", staticHandler)
+	//log.Printf("iniciando o aplicativo %s\n", newRandomXingamento().Value)
+	//log.Fatal(http.ListenAndServe(":3000", nil))
 }
