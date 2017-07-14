@@ -2,6 +2,7 @@ package backend
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -47,7 +48,7 @@ func NewRandomXingamento() Xingamento {
 }
 
 // NewRandomXingamentoImage 0800
-func NewRandomXingamentoImage(client *http.Client) io.Reader {
+func NewRandomXingamentoImage(client *http.Client, text string) io.Reader {
 	const width = 1024 / 2
 	const height = 768 / 2
 	image := getPlaceholder(client, width, height)
@@ -56,7 +57,6 @@ func NewRandomXingamentoImage(client *http.Client) io.Reader {
 	context.SetFontFace(imageFont)
 
 	context.SetRGB(0, 0, 0)
-	xingamento := strings.ToUpper(NewRandomXingamento().Value)
 	strokeSize := 3
 	for dy := -strokeSize; dy <= strokeSize; dy++ {
 		for dx := -strokeSize; dx <= strokeSize; dx++ {
@@ -66,11 +66,11 @@ func NewRandomXingamentoImage(client *http.Client) io.Reader {
 
 			x := width/2 + float64(dx)
 			y := height/2 + float64(dy)
-			context.DrawStringWrapped(xingamento, x, y, 0.5, 0.5, width/2, 1.5, gg.AlignCenter)
+			context.DrawStringWrapped(text, x, y, 0.5, 0.5, width/2, 1.5, gg.AlignCenter)
 		}
 	}
 	context.SetRGB(1, 1, 1)
-	context.DrawStringWrapped(xingamento, width/2, height/2, 0.5, 0.5, width/2, 1.5, gg.AlignCenter)
+	context.DrawStringWrapped(text, width/2, height/2, 0.5, 0.5, width/2, 1.5, gg.AlignCenter)
 
 	buff := new(bytes.Buffer)
 	imgOut := context.Image()
@@ -147,10 +147,27 @@ func imageHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	client := urlfetch.Client(ctx)
 
-	imageReader := NewRandomXingamentoImage(client)
+	hash := strings.TrimPrefix(r.URL.Path, "/image/")
+	text, err := base64.StdEncoding.DecodeString(hash)
+	if err != nil || len(text) == 0 {
+		http.Redirect(w, r, "/image", 301)
+		return
+	}
+
+	imageReader := NewRandomXingamentoImage(client, string(text))
 	w.Header().Set("Content-Type", "image/jpeg")
 
 	io.Copy(w, imageReader)
+}
+
+func randomImageHandler(w http.ResponseWriter, r *http.Request) {
+	xingamento := NewRandomXingamento()
+	text := strings.ToUpper(xingamento.Value)
+
+	hash := base64.StdEncoding.EncodeToString([]byte(text))
+
+	permURL := fmt.Sprintf("/image/%s", hash)
+	http.Redirect(w, r, permURL, 301)
 }
 
 func init() {
@@ -159,6 +176,7 @@ func init() {
 
 	http.HandleFunc("/api", apiHandler)
 	http.HandleFunc("/slack", slackHandler)
-	http.HandleFunc("/image", imageHandler)
+	http.HandleFunc("/image", randomImageHandler)
+	http.HandleFunc("/image/", imageHandler)
 	http.HandleFunc("/", indexHandler)
 }
