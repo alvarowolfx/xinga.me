@@ -1,11 +1,16 @@
-# Bot Xinga.me - API de Ofensas gratuitas 
+# xinga.me
+> Api de Ofensas Gratuitas. Inspirado por [Guia do Xingamento das Galáxias](https://blog.bytequeeugosto.com.br/guia-do-xingamento-das-galaxias/)
 
-Projeto inspirado por [Guia do Xingamento das Galáxias](https://blog.bytequeeugosto.com.br/guia-do-xingamento-das-galaxias/)
+### Como utilizar
 
-Será disponibilizada uma API de consulta de xingamentos aleatórios e bot de integração no Slack.
+#### Web
+http://xinga-me.appspot.com/
 
-## Tecnologias utilizadas
-* Golang
+#### Api
+http://xinga-me.appspot.com/api
 
-## Base dados
+#### Slack
+Está disponível no slack através do Slash Command no endereço *http://xinga-me.appspot.com/slack*
+
+### Referencias
 * Obtida do blog post [Byte Que Eu Gosto - Guia do Xingamento das Galáxias](https://blog.bytequeeugosto.com.br/guia-do-xingamento-das-galaxias/)
