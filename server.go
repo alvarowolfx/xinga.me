@@ -27,6 +27,11 @@ var (
 	imageFont font.Face
 )
 
+var imageProviders = []string{
+	"https://placeimg.com/%d/%d/nature",
+	"http://lorempixel.com/%d/%d/nature/",
+}
+
 // Xingamento 0800
 type Xingamento struct {
 	Value string `json:"xingamento"`
@@ -80,7 +85,11 @@ func NewRandomXingamentoImage(client *http.Client, text string) io.Reader {
 }
 
 func getPlaceholder(client *http.Client, width, height int) image.Image {
-	placeholder := fmt.Sprintf("https://placeimg.com/%d/%d/nature", width, height)
+	return getPlaceholders(client, imageProviders[rand.Intn(len(imageProviders))], width, height)
+}
+
+func getPlaceholders(client *http.Client, url string, width, height int) image.Image {
+	placeholder := fmt.Sprintf(url, width, height)
 	requester := http.Get
 	if client != nil {
 		requester = client.Get
