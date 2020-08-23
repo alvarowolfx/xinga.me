@@ -1,4 +1,4 @@
-package backend
+package main
 
 import (
 	"bytes"
@@ -13,13 +13,12 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/fogleman/gg"
 	"golang.org/x/image/font"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/urlfetch"
 )
 
 var (
@@ -153,8 +152,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func imageHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	client := urlfetch.Client(ctx)
+	client := &http.Client{}
 
 	hash := strings.TrimPrefix(r.URL.Path, "/image/")
 	text, err := base64.StdEncoding.DecodeString(hash)
@@ -188,4 +186,17 @@ func init() {
 	http.HandleFunc("/image", randomImageHandler)
 	http.HandleFunc("/image/", imageHandler)
 	http.HandleFunc("/", indexHandler)
+}
+
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+	log.Printf("Listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
 }
