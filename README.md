@@ -1,16 +1,38 @@
 # xinga.me
 > Api de Ofensas Gratuitas. Inspirado por [Guia do Xingamento das Galáxias](https://blog.bytequeeugosto.com.br/guia-do-xingamento-das-galaxias/)
 
-### Como utilizar
+## Como utilizar
 
-#### Web
+### Web
+
 http://xinga-me.appspot.com/
 
-#### Api
+### Api
+
 http://xinga-me.appspot.com/api
 
-#### Slack
+### Slack
+
 Está disponível no slack através do Slash Command no endereço *http://xinga-me.appspot.com/slack*
 
-### Referencias
+### Docker
+
+Tenha certeza de ter o [Docker]() instalado na sua máquina.
+
+Para buildar a imagem Docker, rode o seguinte comando:
+
+```shell
+$ docker build . -t xinga-me
+```
+
+Para executar um container, defina uma variável de ambiente `PORT` e rode o seguinte comando:
+
+```shell
+$ export PORT=8000
+
+$ docker run --env "PORT=$PORT" -p $PORT:$PORT xinga-me
+```
+
+## Referencias
+
 * Obtida do blog post [Byte Que Eu Gosto - Guia do Xingamento das Galáxias](https://blog.bytequeeugosto.com.br/guia-do-xingamento-das-galaxias/)
