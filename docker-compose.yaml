@@ -1,0 +1,11 @@
+version: "3.6"
+
+services:
+  api:
+    environment:
+      - PORT=${PORT}
+    image: xinga-me
+    build:
+      context: .
+    ports:
+      - ${PORT}:${PORT}
