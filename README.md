@@ -17,7 +17,7 @@ Está disponível no slack através do Slash Command no endereço *http://xinga-
 
 ### Docker
 
-Tenha certeza de ter o [Docker]() instalado na sua máquina.
+Tenha certeza de ter o [Docker](https://www.docker.com/get-started) instalado na sua máquina.
 
 Para buildar a imagem Docker, rode o seguinte comando:
 
@@ -31,6 +31,16 @@ Para executar um container, defina uma variável de ambiente `PORT` e rode o seg
 $ export PORT=8000
 
 $ docker run --env "PORT=$PORT" -p $PORT:$PORT xinga-me
+```
+
+### Docker compose
+
+Para executar o docker-compose, defina uma variável de ambiente `PORT` e rode o seguinte comando:
+
+```shell
+$ export PORT=8000
+
+$ docker-compose up
 ```
 
 ## Referencias
