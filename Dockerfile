@@ -1,31 +1,20 @@
-FROM golang:alpine3.13 AS builder
+# Use the offical Golang image to create a build artifact.
+# This is based on Debian and sets the GOPATH to /go.
+# https://hub.docker.com/_/golang
+FROM golang:1.12 as builder
 
-# Create appuser.
-ENV USER=appuser
-ENV UID=10001 
-
-# See https://stackoverflow.com/a/55757473/12429735RUN 
-RUN adduser \    
-    --disabled-password \    
-    --gecos "" \    
-    --home "/nonexistent" \    
-    --shell "/sbin/nologin" \    
-    --no-create-home \    
-    --uid "${UID}" \    
-    "${USER}"
-
-WORKDIR /app
+# Copy local code to the container image.
+WORKDIR /go/app
 COPY . .
 
-# Install deps and build binary
-RUN go mod download
-RUN go mod verify
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o xinga-me
+# Build the command inside the container.
+# (You may fetch or manage dependencies here,
+# either manually or with a tool like "godep".)
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o app main.go
 
-USER appuser:appuser
+# Use a Docker multi-stage build to create a lean production image.
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM gcr.io/distroless/base
+COPY --from=builder /go/app/ .
 
-# Exposing the given port
-EXPOSE $PORT
-
-# Binary entrypoint
-ENTRYPOINT [ "./xinga-me" ]
+CMD ["/app"]
