@@ -1,4 +1,8 @@
 # xinga.me
+
+[![Build](https://github.com/alvarowolfx/xinga.me/actions/workflows/build.yml/badge.svg)](https://github.com/alvarowolfx/xinga.me/actions/workflows/build.yml)
+[![Docker](https://github.com/alvarowolfx/xinga.me/actions/workflows/docker.yml/badge.svg)](https://github.com/alvarowolfx/xinga.me/actions/workflows/docker.yml)
+
 > Api de Ofensas Gratuitas. Inspirado por [Guia do Xingamento das Galáxias](https://blog.bytequeeugosto.com.br/guia-do-xingamento-das-galaxias/)
 
 ## Como utilizar
