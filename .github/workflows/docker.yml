@@ -1,4 +1,4 @@
-name: Build
+name: Docker
 
 on:
   push: {}
@@ -12,8 +12,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get dependencies
-        run: go mod download
-
-      - name: Test
-        run: go build .
+      - name: Build Docker Image
+        run: docker build -t xingar-me .
